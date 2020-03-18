@@ -1,6 +1,39 @@
 ''' This file reads an INes
 '''
 
+def ReadRom(romPath):
+    """ Reads the given file and returns the byte dump of the file
+
+    Arguments:
+        romPath - the path to the rom
+    """
+
+    # Open the file in binary mode
+    rom = open(romPath, 'rb')
+    header = ReadHeader(rom)
+
+    data = {}
+    data['Header'] = header
+    
+    if(header['PRG_ROM'] > 0):
+        data['PRG_ROM'] = ReadPrgRom(rom, header['PRG_ROM'])
+    
+    if(header['CHR_ROM'] > 0):
+        data['CHR_ROM'] = ReadChrRom(rom, header['CHR_ROM'])
+
+    rom.close()
+    return data
+
+def ReadPrgRom(romFile, prgSize):
+    """ Reads the program rom from the file stream.
+    """
+    return romFile.read(prgSize)
+
+def ReadChrRom(romFile, chrSize):
+    """ Read the character rom
+    """
+    return romFile.read(chrSize)
+
 def ReadHeader(romFile):
     """ Reads the header (first 16 bytes) of the given
     file stream.
@@ -15,8 +48,8 @@ def ReadHeader(romFile):
     romFormat = romFile.read(4)
 
     # Byte order doesn't matter, but is required for int.from_bytes
-    prgRomSize = int.from_bytes(bytes=romFile.read(1), byteorder="big", signed=False)
-    chrRomSize = int.from_bytes(bytes=romFile.read(1), byteorder="big", signed=False)
+    prgRomSize = int.from_bytes(bytes=romFile.read(1), byteorder="big", signed=False) * 0x4000
+    chrRomSize = int.from_bytes(bytes=romFile.read(1), byteorder="big", signed=False) * 0x2000
 
     flag6 = int.from_bytes(bytes=romFile.read(1), byteorder="big", signed=False)
     mirroring = flag6 & 0x01
@@ -37,8 +70,8 @@ def ReadHeader(romFile):
     
     prgRamSize = int.from_bytes(bytes=romFile.read(1), byteorder="big", signed=False)
 
-    # Ignore all other 8 bytes 
-    romFile.read(8)
+    # Ignore all other 7 bytes 
+    romFile.read(7)
 
     # Create a dictionary to store the header information 
     header = {}
@@ -52,6 +85,5 @@ def ReadHeader(romFile):
     header["Persistent"] = persistentStorage
     header["Trainer"] = trainer
     header["Mapper"] = mapper
-
 
     return header
