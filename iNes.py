@@ -20,7 +20,7 @@ def ReadHeader(romFile):
 
     flag6 = int.from_bytes(bytes=romFile.read(1), byteorder="big", signed=False)
     mirroring = flag6 & 0x01
-    persistentStorage = True if (flag6 & 0x02 == 1) else False
+    persistentStorage = True if (flag6 & 0x02 == 2) else False
     trainer = True if (flag6 & 0x04 == 1) else False
 
     # The ignore mapping bit
