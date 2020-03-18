@@ -1,7 +1,7 @@
 import argparse
 
-from iNes import ReadRom
-from CharacterRom import CharacterRomToImage
+from iNes import readRom
+from CharacterBank import dumpBanks 
 
 if __name__ == "__main__":
 
@@ -11,8 +11,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Read the header from the file
-    data = ReadRom(args.in_file)
+    data = readRom(args.in_file)
     print(data['Header'])
 
     # Export the character rom to an image
-    CharacterRomToImage(data)
+    banks = dumpBanks(data)
+    for index, bank in enumerate(banks):
+        bank.save("Bank" + str(index) + ".png")

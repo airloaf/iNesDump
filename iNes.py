@@ -1,7 +1,7 @@
 ''' This file reads an INes
 '''
 
-def ReadRom(romPath):
+def readRom(romPath):
     """ Reads the given file and returns the byte dump of the file
 
     Arguments:
@@ -10,31 +10,31 @@ def ReadRom(romPath):
 
     # Open the file in binary mode
     rom = open(romPath, 'rb')
-    header = ReadHeader(rom)
+    header = readHeader(rom)
 
     data = {}
     data['Header'] = header
     
     if(header['PRG_ROM'] > 0):
-        data['PRG_ROM'] = ReadPrgRom(rom, header['PRG_ROM'])
+        data['PRG_ROM'] = readPrgRom(rom, header['PRG_ROM'])
     
     if(header['CHR_ROM'] > 0):
-        data['CHR_ROM'] = ReadChrRom(rom, header['CHR_ROM'])
+        data['CHR_ROM'] = readChrRom(rom, header['CHR_ROM'])
 
     rom.close()
     return data
 
-def ReadPrgRom(romFile, prgSize):
+def readPrgRom(romFile, prgSize):
     """ Reads the program rom from the file stream.
     """
     return romFile.read(prgSize)
 
-def ReadChrRom(romFile, chrSize):
+def readChrRom(romFile, chrSize):
     """ Read the character rom
     """
-    return romFile.read(chrSize)
+    return romFile.read(chrSize * 0x2000)
 
-def ReadHeader(romFile):
+def readHeader(romFile):
     """ Reads the header (first 16 bytes) of the given
     file stream.
     
@@ -49,7 +49,7 @@ def ReadHeader(romFile):
 
     # Byte order doesn't matter, but is required for int.from_bytes
     prgRomSize = int.from_bytes(bytes=romFile.read(1), byteorder="big", signed=False) * 0x4000
-    chrRomSize = int.from_bytes(bytes=romFile.read(1), byteorder="big", signed=False) * 0x2000
+    chrRomSize = int.from_bytes(bytes=romFile.read(1), byteorder="big", signed=False)
 
     flag6 = int.from_bytes(bytes=romFile.read(1), byteorder="big", signed=False)
     mirroring = flag6 & 0x01
