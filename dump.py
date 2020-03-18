@@ -1,6 +1,7 @@
 import argparse
 
 from iNes import ReadRom
+from CharacterRom import CharacterRomToImage
 
 if __name__ == "__main__":
 
@@ -12,3 +13,6 @@ if __name__ == "__main__":
     # Read the header from the file
     data = ReadRom(args.in_file)
     print(data['Header'])
+
+    # Export the character rom to an image
+    CharacterRomToImage(data)
