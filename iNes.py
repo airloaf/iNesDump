@@ -32,8 +32,8 @@ def ReadHeader(romFile):
 
     # Get the mapper value from the top 4 bits of flag 6 and 7
     flag7 = int.from_bytes(bytes=romFile.read(1), byteorder="big", signed=False)
-    mapper = (flag6 & 0xF0) > 4
-    mapper += (flag6 & 0xF0)
+    mapper = (flag6 & 0xF0) >> 4
+    mapper += (flag7 & 0xF0)
     
     prgRamSize = int.from_bytes(bytes=romFile.read(1), byteorder="big", signed=False)
 
